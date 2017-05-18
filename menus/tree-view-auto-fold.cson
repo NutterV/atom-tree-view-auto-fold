@@ -1,0 +1,22 @@
+# See https://atom.io/docs/latest/hacking-atom-package-word-count#menus for more details
+'context-menu':
+  'atom-text-editor': [
+    {
+      'label': 'Toggle Tree View Auto Fold'
+      'command': 'tree-view-auto-fold:toggle'
+    }
+  ]
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'Tree View Auto Fold'
+      'submenu': [
+        {
+          'label': 'Toggle'
+          'command': 'tree-view-auto-fold:toggle'
+        }
+      ]
+    ]
+  }
+]
