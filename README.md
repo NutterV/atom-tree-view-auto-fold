@@ -6,7 +6,7 @@ This package is a plugin on top of the tree-view, to fold all unmodified / close
 
 ### Screenshots
 
-![Screenshot](https://github.com/NutterV/atom-tree-view-auto-fold/demo.gif)
+![Screenshot](https://raw.githubusercontent.com/NutterV/atom-tree-view-auto-fold/master/demo.gif)
 
 ### Installation
 
