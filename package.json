@@ -1,7 +1,7 @@
 {
   "name": "tree-view-auto-fold",
   "main": "./lib/main",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "This package is a plugin on top of the tree-view, to fold all unmodified / closed files until explicitly browsed for.",
   "keywords": [
     "tree-view",
