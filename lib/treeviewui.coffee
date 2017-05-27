@@ -149,9 +149,10 @@ module.exports = class TreeViewUI
     #  console.log 'Keep Entry: ' + entry
 
   addFileSegmentsToExceptions: (pathToSegmentize) ->
-    for path in utils.allPathSegments pathToSegmentize
-      if not @entriesToKeepVisible.includes(path)
-        @entriesToKeepVisible.push(path)
+    if path?
+      for path in utils.allPathSegments pathToSegmentize
+        if not @entriesToKeepVisible.includes(path)
+          @entriesToKeepVisible.push(path)
 
   entryClicked: (e) ->
     if entry = e.target.closest('.entry')
@@ -268,7 +269,7 @@ module.exports = class TreeViewUI
 
       #for entry in parent.querySelectorAll('.entry')
       #  if not entry.classList.contains('project-root') and entry.classList.contains('directory')
-      for entry in parent.querySelectorAll('.directory')
+      for entry in parent.querySelectorAll?('.directory')
         if entry.classList.contains('project-root')
           continue
         if entry.classList.contains('collapsed')
