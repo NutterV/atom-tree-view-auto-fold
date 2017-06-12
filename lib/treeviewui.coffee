@@ -1,4 +1,3 @@
-#{CompositeDisposable} = require 'event-kit'
 {CompositeDisposable} = require 'atom'
 path = require 'path'
 utils = require './utils'
@@ -62,12 +61,6 @@ module.exports = class TreeViewUI
       return if e.target.classList.contains('entries')
       @entryClicked(e) unless e.shiftKey or e.metaKey or e.ctrlKey
     ), true
-    ###
-    document.getElementsByClassName('tool-panel')[0].addEventListener 'click', (e) =>
-      # This prevents accidental collapsing when a .entries element is the event target
-      return if e.target.classList.contains('entries')
-      @entryClicked(e) unless e.shiftKey or e.metaKey or e.ctrlKey
-    ###
 
   subscribeUpdateTreeView: ->
     @subscriptions.add(
@@ -145,9 +138,6 @@ module.exports = class TreeViewUI
         path = editor?.buffer.file?.path
         @addFileSegmentsToExceptions(path) unless @pathsToIgnore.includes(path)
 
-    #for entry in @entriesToKeepVisible
-    #  console.log 'Keep Entry: ' + entry
-
   addFileSegmentsToExceptions: (pathToSegmentize) ->
     if path?
       for path in utils.allPathSegments pathToSegmentize
@@ -158,13 +148,6 @@ module.exports = class TreeViewUI
     if entry = e.target.closest('.entry')
       if entry.classList.contains('directory')
         e.stopImmediatePropagation()
-        #if entry.classList.contains('expanded')
-        #  @unhideData entry
-        #else
-        #  if entry.classList.contains('collapsed')
-        #    entry.classList.remove('collapsed')
-        #    entry.classList.add('expanded')
-        #    @unhideData entry
         @unhideData entry
       else
         if entry.classList.contains('file')
@@ -174,19 +157,11 @@ module.exports = class TreeViewUI
 
   unhideData: (entry) ->
     if entry.classList.contains('hiddenData')
-      ###
-      @swapClass entry 'collapsed' 'expanded'
-      @removeClass entry 'hiddenData'
-      for child in entry.querySelectorAll('.entry')
-        @removeClass child 'hiddenEntry'
-      @removeClass entry.parentNode.parentNode.children[0] 'autofolded'
-      ###
       if entry.classList.contains('collapsed') or entry.children[0].classList.contains('autofolded')
         @swapClass entry, 'collapsed', 'expanded'
         for child in entry.children[1].querySelectorAll('.entry')
           @removeClass child, 'hiddenEntry'
           if child.classList.contains('directory')
-            #child.querySelectorAll('.hiddenEntry').length >
             @removeClass child.children[0], 'autofolded'
         @removeClass entry.children[0], 'autofolded'
       else
@@ -240,43 +215,13 @@ module.exports = class TreeViewUI
     ents = @entriesToKeepVisible
     if @hideAllExceptOpenFiles or @hideAllExceptModifiedFiles
       @removeAllAddedClasses parent
-      #for entry in parent.querySelectorAll('.entry')
-      #  if entry.classList.contains('file')
-      for entry in parent.querySelectorAll('.file')
-        ###
-        if (@hideAllExceptOpenFiles and
-          not @entriesToKeepVisible.includes(utils.normalizePath entry.getPath())) or
-          (@hideAllExceptModifiedFiles and
-          not entry.classList.contains('status-added') and
-          not entry.classList.contains('status-modified'))
-            entry.classList.add('hiddenEntry')
-            @addDataClassToParentFolder entry, 'hiddenData'
-        if (@showOpenFileIndicator and @hideAllExceptOpenFiles and
-          @entriesToKeepVisible.includes(utils.normalizePath entry.getPath()))
-            entry.classList.add('open')
-            @addDataClassToParentFolder entry, 'openFiles'
-        ###
-        if @hideAllExceptOpenFiles and
-          @entriesToKeepVisible.includes(utils.normalizePath entry.getPath())
-            if @showOpenFileIndicator
-              entry.classList.add('open')
-              @addDataClassToParentFolder entry, 'openFiles'
-            continue
-        if @hideAllExceptModifiedFiles and
-          (entry.classList.contains('status-added') or
-          entry.classList.contains('status-modified'))
-            continue
-        entry.classList.add('hiddenEntry')
-        @addDataClassToParentFolder entry, 'hiddenData'
-
-      #for entry in parent.querySelectorAll('.entry')
-      #  if not entry.classList.contains('project-root') and entry.classList.contains('directory')
-      for entry in parent.querySelectorAll?('.directory')
-        if entry.classList.contains('project-root')
-          continue
-        if entry.classList.contains('collapsed')
+      try
+        for entry in parent.querySelectorAll('.file')
           if @hideAllExceptOpenFiles and
             @entriesToKeepVisible.includes(utils.normalizePath entry.getPath())
+              if @showOpenFileIndicator
+                entry.classList.add('open')
+                @addDataClassToParentFolder entry, 'openFiles'
               continue
           if @hideAllExceptModifiedFiles and
             (entry.classList.contains('status-added') or
@@ -284,8 +229,24 @@ module.exports = class TreeViewUI
               continue
           entry.classList.add('hiddenEntry')
           @addDataClassToParentFolder entry, 'hiddenData'
-        else
-          children = entry.querySelectorAll('.file').length
-          hiddenChildren = entry.querySelectorAll('.hiddenEntry').length
-          if children == hiddenChildren
-            @swapClass entry, 'expanded', 'collapsed'
+
+        for entry in parent.querySelectorAll?('.directory')
+          if entry.classList.contains('project-root')
+            continue
+          if entry.classList.contains('collapsed')
+            if @hideAllExceptOpenFiles and
+              @entriesToKeepVisible.includes(utils.normalizePath entry.getPath())
+                continue
+            if @hideAllExceptModifiedFiles and
+              (entry.classList.contains('status-added') or
+              entry.classList.contains('status-modified'))
+                continue
+            entry.classList.add('hiddenEntry')
+            @addDataClassToParentFolder entry, 'hiddenData'
+          else
+            children = entry.querySelectorAll('.file').length
+            hiddenChildren = entry.querySelectorAll('.hiddenEntry').length
+            if children == hiddenChildren
+              @swapClass entry, 'expanded', 'collapsed'
+      catch error
+        console.log parent.toString()
