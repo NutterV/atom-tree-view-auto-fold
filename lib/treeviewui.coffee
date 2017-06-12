@@ -211,11 +211,13 @@ module.exports = class TreeViewUI
 
   removeAllAddedClasses: (parent=@treeViewMaster.list) ->
     @removeHeaderClasses parent
-
-    for entry in parent.querySelectorAll('.entry')
-      @removeClass entry, 'open'
-      @removeClass entry, 'hiddenData'
-      @removeClass entry, 'hiddenEntry'
+    try
+      for entry in parent.querySelectorAll('.entry')
+        @removeClass entry, 'open'
+        @removeClass entry, 'hiddenData'
+        @removeClass entry, 'hiddenEntry'
+    catch error
+      console.log parent.toString()
 
   removeHeaderClasses: (parent=@treeViewMaster.list) ->
     try

@@ -1,6 +1,6 @@
 # Tree View Auto Fold Package
 
-[![Version](https://img.shields.io/badge/Version-1.0.0-brightgreen.svg?style=flat-square)](https://atom.io/packages/atom-tree-view-auto-fold)
+[![Version](https://img.shields.io/badge/Version-1.2.0-brightgreen.svg?style=flat-square)](https://atom.io/packages/atom-tree-view-auto-fold)
 
 This package is a plugin on top of the tree-view, to fold all unmodified / closed files until explicitly browsed for.
 
